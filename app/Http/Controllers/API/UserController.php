@@ -12,7 +12,7 @@ class UserController extends BaseController
 {
     public function me()
     {
-        $user = auth()->user();
+        $user = auth()->user()->load(['role', 'group', 'gender']);
 
         return $this->sendResponse($user, 'User retrieved successfully.');
     }
