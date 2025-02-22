@@ -12,6 +12,7 @@
     <link href="{{ asset('dist/css/tabler-payments.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/tabler-vendors.min.css?1692870487') }}" rel="stylesheet" />
     <link href="{{ asset('dist/css/demo.min.css?1692870487') }}" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{ asset('static/favicon.ico') }}">
     {{-- @vite('resources/css/app.css') --}}
     {{-- @vite('resources/sass/app.scss') --}}
     <style>

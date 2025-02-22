@@ -55,7 +55,11 @@ class UserDataTable extends DataTable
 
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->with([
+            'gender',
+            'group',
+            'role',
+        ])->newQuery();
     }
 
     public function html(): HtmlBuilder
@@ -87,6 +91,9 @@ class UserDataTable extends DataTable
             Column::computed('#')->exportable(false)->printable(false)->width(60)->addClass('text-center'),
             Column::make('name')->title('Name'),
             Column::make('email')->title('Email'),
+            Column::make('group.name')->title('Group'),
+            Column::make('role.name')->title('Role'),
+            Column::make('gender.name')->title('Gender'),
         ];
     }
 

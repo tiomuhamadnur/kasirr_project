@@ -22,4 +22,9 @@ class Group extends Model
             $model->uuid = Str::uuid();
         });
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }
