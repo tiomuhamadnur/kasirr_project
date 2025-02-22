@@ -40,7 +40,7 @@ Route::get('/home', function () {
     return redirect()->route('dashboard.index');
 });
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::resource('/dashboard', DashboardController::class);
 
     Route::resource('/user', UserController::class);

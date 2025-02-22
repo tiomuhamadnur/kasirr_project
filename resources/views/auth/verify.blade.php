@@ -83,7 +83,11 @@
                 </div>
             </div>
             <div class="text-center text-secondary mt-3">
-                Already have account? <a href="{{ route('login') }}" tabindex="-1">Sign in</a>
+                Already have account? <a href="#" onclick="document.getElementById('loginForm').submit();" tabindex="-1">Sign in</a>
+                <form id="loginForm" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                    @method('POST')
+                </form>
             </div>
         </div>
     </div>
