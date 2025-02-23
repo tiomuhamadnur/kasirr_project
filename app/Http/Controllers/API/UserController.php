@@ -8,6 +8,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends BaseController
@@ -46,15 +47,16 @@ class UserController extends BaseController
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         $data = $request->validate([
             'gender_id' => 'required|numeric',
             'phone' => 'required|numeric|digits_between:9,15',
             'birth_date' => 'required|date',
+            'address' => 'required|string',
         ]);
 
-        $user = User::find($id);
+        $user = Auth::user();
 
         if(!$user){
             return $this->sendError('User not found.' );
@@ -66,7 +68,7 @@ class UserController extends BaseController
             'group',
             'role',
             'gender',
-        ])->find($id);
+        ])->find($user->id);
 
         return $this->sendResponse(['user' => $user], 'User updated successfully.');
     }

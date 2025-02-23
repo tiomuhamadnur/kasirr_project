@@ -18,9 +18,10 @@ Route::middleware(['auth:api'])->group( function () {
 });
 
 Route::middleware(['auth:api', 'email_verified'])->group( function () {
+    Route::get('user', [UserController::class, 'index']);
+    Route::post('user', [UserController::class, 'update']);
     Route::post('user/photo-profile', [UserController::class, 'update_photo_profile']);
 
-    Route::apiResource('user', UserController::class);
     Route::apiResource('backup', BackupController::class);
     Route::apiResource('license', LicenseController::class);
 });

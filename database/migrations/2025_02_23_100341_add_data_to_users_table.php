@@ -12,6 +12,7 @@ return new class extends Migration
             $table->string('phone')->nullable()->after('gender_id');
             $table->text('photo')->nullable()->after('gender_id');
             $table->date('birth_date')->nullable()->after('gender_id');
+            $table->text('address')->nullable()->after('gender_id');
             $table->softDeletes()->after('remember_token');
         });
     }
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->dropColumn('phone');
             $table->dropColumn('photo');
             $table->dropColumn('birth_date');
+            $table->dropColumn('address');
             $table->dropSoftDeletes();
         });
     }
