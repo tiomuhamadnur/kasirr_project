@@ -82,7 +82,7 @@ class AuthController extends BaseController
         $input['password'] = bcrypt($input['password']);
         $input['role_id'] = 3;
         $input['group_id'] = $this->generateGroupBySystem();
-        $user = User::create($input);
+        $user = User::with('role', 'gender', 'group')->create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['user'] =  $user;
 
