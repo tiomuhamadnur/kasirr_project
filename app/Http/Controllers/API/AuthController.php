@@ -23,21 +23,17 @@ class AuthController extends BaseController
         $this->activationService = $activationService;
     }
 
-    public function sendActivationCode(Request $request)
+    public function sendActivationCode()
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
+        $user = Auth::user();
 
         if($user->email_verified_at) {
             return $this->sendError('Your email has been verified, you don’t need an activation code.');
         }
 
-        $activation_code = $this->activationService->sendActivationCode($request->email);
+        $activation_code = $this->activationService->sendActivationCode($user->email);
 
-        return $this->sendResponse(['activation_code' => $activation_code], 'Activation code has been sent successfully.');
+        return $this->sendResponse(['email' => $user->email, 'activation_code' => $activation_code], 'Activation code has been sent successfully.');
     }
 
     public function verifyActivationCode(Request $request)
