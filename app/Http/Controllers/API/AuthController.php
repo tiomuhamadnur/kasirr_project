@@ -71,6 +71,7 @@ class AuthController extends BaseController
             'password' => 'required',
             'c_password' => 'required|same:password',
             'phone' => 'required|numeric|digits_between:9,15',
+            'role_id' => 3,
         ]);
 
         if($validator->fails()){
@@ -83,7 +84,7 @@ class AuthController extends BaseController
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['user'] =  $user;
 
-        return $this->sendResponse($success, 'User register successfully.');
+        return $this->sendResponse($success, 'User register successfully, but need email verification');
     }
 
     public function login(Request $request): JsonResponse
