@@ -10,6 +10,7 @@ use App\Models\Group;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Validator;
 use Illuminate\Http\JsonResponse;
 
@@ -81,11 +82,9 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $input['role_id'] = 3;
+        $input['group_id'] = $this->generateGroupBySystem();
         $user = User::with('role', 'gender', 'group')->create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
-        $user = $user->update([
-            'group_id' => $this->generateGroupBySystem()
-        ]);
         $success['user'] =  $user;
 
         return $this->sendResponse($success, 'User register successfully, but need email verification');
@@ -93,9 +92,13 @@ class AuthController extends BaseController
 
     private function generateGroupBySystem()
     {
+        $code = strtoupper(Str::random(30));
+        $code = preg_replace('/[^A-Z0-9]/', '', $code);
+        $code = substr($code, 0, 20);
+
         $group = Group::create([
-            'name' => rand(10000, 100000) . '-' . auth()->user()->name,
-            'code' => rand(10000, 100000) . '-' . auth()->user()->name . '-' . auth()->user()->email,
+            'name' => $code,
+            'code' => $code,
             'description' => 'Group ini digenerate otomatis oleh system pada ' . Carbon::now(),
         ]);
 
