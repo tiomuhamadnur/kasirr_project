@@ -6,6 +6,7 @@ use App\Services\ActivationMailService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\ActivationCode;
+use App\Models\Group;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -80,11 +81,23 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $input['role_id'] = 3;
+        $input['group_id'] = $this->generateGroupBySystem();
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['user'] =  $user;
 
         return $this->sendResponse($success, 'User register successfully, but need email verification');
+    }
+
+    private function generateGroupBySystem()
+    {
+        $group = Group::create([
+            'name' => rand(10000, 100000) . '-' . auth()->user()->name,
+            'code' => rand(10000, 100000) . '-' . auth()->user()->name . '-' . auth()->user()->email,
+            'description' => 'Group ini digenerate otomatis oleh system pada ' . Carbon::now(),
+        ]);
+
+        return $group->id;
     }
 
     public function login(Request $request): JsonResponse
