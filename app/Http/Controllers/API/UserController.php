@@ -54,17 +54,19 @@ class UserController extends BaseController
             'birth_date' => 'required|date',
         ]);
 
-        $user = User::with([
-            'group',
-            'role',
-            'gender',
-        ])->find($id);
+        $user = User::find($id);
 
         if(!$user){
             return $this->sendError('User not found.' );
         }
 
         $user->update($data);
+
+        $user = User::with([
+            'group',
+            'role',
+            'gender',
+        ])->find($id);
 
         return $this->sendResponse(['user' => $user], 'User updated successfully.');
     }
