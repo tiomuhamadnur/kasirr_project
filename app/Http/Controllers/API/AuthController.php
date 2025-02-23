@@ -81,9 +81,11 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $input['role_id'] = 3;
-        $input['group_id'] = $this->generateGroupBySystem();
         $user = User::with('role', 'gender', 'group')->create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
+        $user = $user->update([
+            'group_id' => $this->generateGroupBySystem()
+        ]);
         $success['user'] =  $user;
 
         return $this->sendResponse($success, 'User register successfully, but need email verification');
