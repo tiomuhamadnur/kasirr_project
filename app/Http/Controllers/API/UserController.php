@@ -79,7 +79,7 @@ class UserController extends BaseController
 
         $photo = $request->file('photo');
 
-        $user = User::with(['group', 'role', 'gender'])->find($request->user_id);
+        $user = User::with(['group', 'role', 'gender'])->find(auth()->user()->id);
 
         if (!$user) {
             return $this->sendError('User not found.');
