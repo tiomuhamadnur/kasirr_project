@@ -117,11 +117,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Description</label>
-                            <textarea class="form-control" name="description" id="description" rows="4" placeholder="input description" required></textarea>
+                            <textarea class="form-control" name="description" id="description" rows="4" placeholder="input description"
+                                required></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Expired Date</label>
-                            <input type="datetime-local" class="form-control" name="expired_at" autocomplete="off" required>
+                            <input type="datetime-local" class="form-control" name="expired_at" autocomplete="off"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Status</label>
@@ -176,11 +178,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Description</label>
-                            <textarea class="form-control" name="description" id="description_edit" rows="4" placeholder="input description" required></textarea>
+                            <textarea class="form-control" name="description" id="description_edit" rows="4"
+                                placeholder="input description" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Expired Date</label>
-                            <input type="datetime-local" class="form-control" name="expired_at" id="expired_at_edit" autocomplete="off" required>
+                            <input type="datetime-local" class="form-control" name="expired_at" id="expired_at_edit"
+                                autocomplete="off" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Status</label>
@@ -218,6 +222,7 @@
 @endpush
 
 @section('javascript')
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#editModal').on('show.bs.modal', function(e) {
@@ -232,6 +237,21 @@
                 $('#description_edit').val(description);
                 $('#expired_at_edit').val(expired_at);
                 $('#status_id_edit').val(status_id);
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var clipboard = new ClipboardJS('.copy-btn');
+
+            clipboard.on('success', function(e) {
+                alert('Copied: ' + e.text); // Notifikasi berhasil
+                e.clearSelection(); // Hapus seleksi setelah copy
+            });
+
+            clipboard.on('error', function(e) {
+                alert('Gagal menyalin teks, coba secara manual.'); // Notifikasi error
             });
         });
     </script>
