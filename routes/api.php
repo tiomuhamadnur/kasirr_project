@@ -11,12 +11,16 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware('auth:api')->group( function () {
+Route::middleware(['auth:api'])->group( function () {
+    Route::post('send-activation-code', [AuthController::class, 'sendActivationCode']);
+    Route::post('verify-activation-code', [AuthController::class, 'verifyActivationCode']);
     Route::post('logout', [AuthController::class, 'logout']);
+});
 
-    Route::get('me', [UserController::class, 'me']);
+Route::middleware(['auth:api', 'email_verified'])->group( function () {
+    Route::post('user/photo-profile', [UserController::class, 'update_photo_profile']);
 
-    Route::apiResource('users', UserController::class);
+    Route::apiResource('user', UserController::class);
     Route::apiResource('backup', BackupController::class);
     Route::apiResource('license', LicenseController::class);
 });

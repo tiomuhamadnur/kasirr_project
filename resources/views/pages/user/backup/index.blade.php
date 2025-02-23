@@ -116,8 +116,8 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label required">File Backup (SQLite)</label>
-                            <input type="file" class="form-control" name="file" id="file" accept=".sqlite"
+                            <label class="form-label required">File Backup (.db)</label>
+                            <input type="file" class="form-control" name="file" id="file" accept=".db"
                                 required>
                         </div>
                         <div class="mb-3">
@@ -180,8 +180,8 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">File Backup (SQLite)</label>
-                            <input type="file" class="form-control" name="file" id="file_edit" accept=".sqlite">
+                            <label class="form-label">File Backup (.db)</label>
+                            <input type="file" class="form-control" name="file" id="file_edit" accept=".db">
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">User</label>

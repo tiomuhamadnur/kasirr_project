@@ -27,34 +27,24 @@ class BackupController extends BaseController
             return $this->sendError('User has no group assigned.');
         }
 
-        $backup = Backup::whereRelation('project.group', 'id', '=', $group_id)->latest()->first();
+        $backup = Backup::with(['project', 'user', 'project.license', 'project.license.status', 'project.group'])->whereRelation('project.group', 'id', '=', $group_id)->latest()->first();
 
         if (is_null($backup)) {
             return $this->sendError('Data backup not found.');
         }
 
-        $result = [
-            'url' => asset('/storage/' . $backup->file),
-            'project_name' => $backup->project->name,
-            'description' => $backup->description,
-            'uploaded_by' => $backup->user->name,
-            'uploaded_at' => $backup->updated_at,
-        ];
-
-        return $this->sendResponse($result, 'Backup retrieved successfully.');
+        return $this->sendResponse(['backup' => $backup], 'Backup retrieved successfully.');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'file|nullable|extensions:sqlite',
+            'file' => 'file|required|extensions:db',
         ]);
 
         $file = $request->file('file');
 
-        $project = Project::where('group_id', auth()->user()->group_id)
-            ->with(['group', 'license', 'license.status'])
-            ->first();
+        $project = Project::where('group_id', auth()->user()->group_id)->first();
 
         if (!$project) {
             return $this->sendError('User has no project assigned.');
@@ -67,6 +57,7 @@ class BackupController extends BaseController
         ];
 
         $backup = Backup::updateOrCreate($rawdata, $rawdata);
+        $backup->load(['project', 'user', 'project.license', 'project.license.status', 'project.group']);
 
         if ($file) {
             $filePath = $this->fileUploadService->uploadFile($file, 'backup/file/');
@@ -75,15 +66,7 @@ class BackupController extends BaseController
             ]);
         }
 
-        $result = [
-            'url' => asset('/storage/' . $backup->file),
-            'project' => $project,
-            'description' => $backup->description,
-            'uploaded_by' => $backup->user->name,
-            'uploaded_at' => $backup->updated_at,
-        ];
-
-        return $this->sendResponse($result, 'Data backup uploaded successfully.');
+        return $this->sendResponse(['backup' => $backup], 'Data backup uploaded successfully.');
     }
 
     public function show()
