@@ -31,8 +31,7 @@
         <div class="container container-tight py-4">
             <div class="text-center mb-4">
                 <a href="." class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ asset('static/logo.svg') }}" width="110" height="32" alt="Tabler"
-                        class="navbar-brand-image">
+                    <img src="{{ asset('static/logo.png') }}" width="auto" height="60" alt="Tabler">
                 </a>
             </div>
             <form class="card card-md" action="{{ route('password.update') }}" method="POST">
