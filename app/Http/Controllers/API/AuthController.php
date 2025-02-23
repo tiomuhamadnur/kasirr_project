@@ -71,7 +71,6 @@ class AuthController extends BaseController
             'password' => 'required',
             'c_password' => 'required|same:password',
             'phone' => 'required|numeric|digits_between:9,15',
-            'role_id' => 3,
         ]);
 
         if($validator->fails()){
@@ -80,6 +79,7 @@ class AuthController extends BaseController
 
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
+        $input['role_id'] = 3;
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['user'] =  $user;
