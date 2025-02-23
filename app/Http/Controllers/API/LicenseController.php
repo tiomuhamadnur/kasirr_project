@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\API\BaseController as BaseController;
+use App\Models\License;
+use App\Models\LicenseUsed;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
@@ -57,7 +59,32 @@ class LicenseController extends BaseController
             return $this->sendError('Your license key is not registered in our system.');
         }
 
+        LicenseUsed::create([
+            'project_id' => $project->id,
+            'user_id' => auth()->user()->id,
+        ]);
+
+        $license['license_use'] = $this->license_used($license->key);
+
         return $this->sendResponse(['license' => $license], 'Your license key matches in our system.');
+    }
+
+    private function license_used($licenseKey)
+    {
+        $licenseUsed = LicenseUsed::whereRelation('project.license', 'key', $licenseKey)
+            ->with([
+                'user',
+                'user.group',
+                'user.gender',
+                'user.role',
+            ])
+            ->get();
+
+        return [
+            'used' => $licenseUsed->isNotEmpty(),
+            'used_count' => $licenseUsed->count(),
+            'used_by' => $licenseUsed->map(fn($item) => $item->user)->all(),
+        ];
     }
 
 
