@@ -116,6 +116,33 @@
                             <input type="email" class="form-control" name="email" placeholder="Input email"
                                 autocomplete="off" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Gender</label>
+                            <select class="form-select" name="gender_id" id="gender_id" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($gender as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Role</label>
+                            <select class="form-select" name="role_id" id="role_id" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($role as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Group</label>
+                            <select class="form-select" name="group_id" id="group_id" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($group as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
@@ -156,8 +183,35 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Email</label>
-                            <input type="email" class="form-control" name="email" id="email_edit" placeholder="Input email"
-                                autocomplete="off" required>
+                            <input type="email" class="form-control" name="email" id="email_edit"
+                                placeholder="Input email" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Gender</label>
+                            <select class="form-select" name="gender_id" id="gender_id_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($gender as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Role</label>
+                            <select class="form-select" name="role_id" id="role_id_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($role as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Group</label>
+                            <select class="form-select" name="group_id" id="group_id_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                @foreach ($group as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -192,10 +246,16 @@
                 var url = $(e.relatedTarget).data('url');
                 var name = $(e.relatedTarget).data('name');
                 var email = $(e.relatedTarget).data('email');
+                var gender_id = $(e.relatedTarget).data('gender_id');
+                var role_id = $(e.relatedTarget).data('role_id');
+                var group_id = $(e.relatedTarget).data('group_id');
 
                 document.getElementById("editForm").action = url;
                 $('#name_edit').val(name);
                 $('#email_edit').val(email);
+                $('#gender_id_edit').val(gender_id);
+                $('#role_id_edit').val(role_id);
+                $('#group_id_edit').val(group_id);
             });
         });
     </script>

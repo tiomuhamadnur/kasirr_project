@@ -24,7 +24,7 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="#features" data-bs-toggle="dropdown"
                             data-bs-auto-close="outside" role="button" aria-expanded="false">
                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -97,149 +97,151 @@
                             </div>
                         </div>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown"
-                            data-bs-auto-close="outside" role="button" aria-expanded="false">
-                            <span class="nav-link-icon d-md-none d-lg-inline-block">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-user">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                </svg>
-                            </span>
-                            <span class="nav-link-title">
-                                User
-                            </span>
-                        </a>
-                        <div class="dropdown-menu">
-                            <div class="dropdown-menu-columns">
-                                <div class="dropdown-menu-column">
-                                    <a class="dropdown-item {{ request()->routeIs('user.index') ? 'active' : '' }}"
-                                        href="{{ route('user.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-users">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                                        </svg>
-                                        Users
-                                    </a>
-                                    <a class="dropdown-item {{ request()->routeIs('group.index') ? 'active' : '' }}"
-                                        href="{{ route('group.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-users-group">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                            <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
-                                            <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                            <path d="M17 10h2a2 2 0 0 1 2 2v1" />
-                                            <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-                                            <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
-                                        </svg>
-                                        Group
-                                    </a>
+                    @if(auth()->user()->role_id == 1)
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#users" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-user">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                    </svg>
+                                </span>
+                                <span class="nav-link-title">
+                                    User
+                                </span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-menu-columns">
+                                    <div class="dropdown-menu-column">
+                                        <a class="dropdown-item {{ request()->routeIs('user.index') ? 'active' : '' }}"
+                                            href="{{ route('user.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-users">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                                            </svg>
+                                            Users
+                                        </a>
+                                        <a class="dropdown-item {{ request()->routeIs('group.index') ? 'active' : '' }}"
+                                            href="{{ route('group.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-users-group">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                <path d="M8 21v-1a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v1" />
+                                                <path d="M15 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                <path d="M17 10h2a2 2 0 0 1 2 2v1" />
+                                                <path d="M5 5a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                                <path d="M3 13v-1a2 2 0 0 1 2 -2h2" />
+                                            </svg>
+                                            Group
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown"
-                            data-bs-auto-close="outside" role="button" aria-expanded="false">
-                            <span
-                                class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/layout-2 -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-database">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" />
-                                    <path d="M4 6v6a8 3 0 0 0 16 0v-6" />
-                                    <path d="M4 12v6a8 3 0 0 0 16 0v-6" />
-                                </svg>
-                            </span>
-                            <span class="nav-link-title">
-                                Master Data
-                            </span>
-                        </a>
-                        <div class="dropdown-menu">
-                            <div class="dropdown-menu-columns">
-                                <div class="dropdown-menu-column">
-                                    <a class="dropdown-item {{ request()->routeIs('gender.index') ? 'active' : '' }}"
-                                        href="{{ route('gender.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-gender-bigender">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M11 11m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                            <path d="M19 3l-5 5" />
-                                            <path d="M15 3h4v4" />
-                                            <path d="M11 16v6" />
-                                            <path d="M8 19h6" />
-                                        </svg>
-                                        Gender
-                                    </a>
-                                    <a class="dropdown-item {{ request()->routeIs('role.index') ? 'active' : '' }}"
-                                        href="{{ route('role.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-user-cog">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-                                            <path d="M6 21v-2a4 4 0 0 1 4 -4h2.5" />
-                                            <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                                            <path d="M19.001 15.5v1.5" />
-                                            <path d="M19.001 21v1.5" />
-                                            <path d="M22.032 17.25l-1.299 .75" />
-                                            <path d="M17.27 20l-1.3 .75" />
-                                            <path d="M15.97 17.25l1.3 .75" />
-                                            <path d="M20.733 20l1.3 .75" />
-                                        </svg>
-                                        Role
-                                    </a>
-                                    <a class="dropdown-item {{ request()->routeIs('category.index') ? 'active' : '' }}"
-                                        href="{{ route('category.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-category">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M4 4h6v6h-6z" />
-                                            <path d="M14 4h6v6h-6z" />
-                                            <path d="M4 14h6v6h-6z" />
-                                            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-                                        </svg>
-                                        Category
-                                    </a>
-                                    <a class="dropdown-item {{ request()->routeIs('status.index') ? 'active' : '' }}"
-                                        href="{{ route('status.index') }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-hierarchy-2">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M10 3h4v4h-4z" />
-                                            <path d="M3 17h4v4h-4z" />
-                                            <path d="M17 17h4v4h-4z" />
-                                            <path d="M7 17l5 -4l5 4" />
-                                            <path d="M12 7l0 6" />
-                                        </svg>
-                                        Status
-                                    </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#master-data" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                <span
+                                    class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/layout-2 -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-database">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M12 6m-8 0a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" />
+                                        <path d="M4 6v6a8 3 0 0 0 16 0v-6" />
+                                        <path d="M4 12v6a8 3 0 0 0 16 0v-6" />
+                                    </svg>
+                                </span>
+                                <span class="nav-link-title">
+                                    Master Data
+                                </span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-menu-columns">
+                                    <div class="dropdown-menu-column">
+                                        <a class="dropdown-item {{ request()->routeIs('gender.index') ? 'active' : '' }}"
+                                            href="{{ route('gender.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-gender-bigender">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M11 11m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                                <path d="M19 3l-5 5" />
+                                                <path d="M15 3h4v4" />
+                                                <path d="M11 16v6" />
+                                                <path d="M8 19h6" />
+                                            </svg>
+                                            Gender
+                                        </a>
+                                        <a class="dropdown-item {{ request()->routeIs('role.index') ? 'active' : '' }}"
+                                            href="{{ route('role.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-user-cog">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                                <path d="M6 21v-2a4 4 0 0 1 4 -4h2.5" />
+                                                <path d="M19.001 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                                <path d="M19.001 15.5v1.5" />
+                                                <path d="M19.001 21v1.5" />
+                                                <path d="M22.032 17.25l-1.299 .75" />
+                                                <path d="M17.27 20l-1.3 .75" />
+                                                <path d="M15.97 17.25l1.3 .75" />
+                                                <path d="M20.733 20l1.3 .75" />
+                                            </svg>
+                                            Role
+                                        </a>
+                                        <a class="dropdown-item {{ request()->routeIs('category.index') ? 'active' : '' }}"
+                                            href="{{ route('category.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-category">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M4 4h6v6h-6z" />
+                                                <path d="M14 4h6v6h-6z" />
+                                                <path d="M4 14h6v6h-6z" />
+                                                <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                            </svg>
+                                            Category
+                                        </a>
+                                        <a class="dropdown-item {{ request()->routeIs('status.index') ? 'active' : '' }}"
+                                            href="{{ route('status.index') }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-hierarchy-2">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M10 3h4v4h-4z" />
+                                                <path d="M3 17h4v4h-4z" />
+                                                <path d="M17 17h4v4h-4z" />
+                                                <path d="M7 17l5 -4l5 4" />
+                                                <path d="M12 7l0 6" />
+                                            </svg>
+                                            Status
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
+                        </li>
+                    @endif
                     {{-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
                             data-bs-auto-close="outside" role="button" aria-expanded="false">

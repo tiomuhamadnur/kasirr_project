@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\user\BackupController;
 use App\Http\Controllers\user\LicenseController;
+use App\Http\Controllers\user\ProfileController;
 use App\Http\Controllers\user\ProjectController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('/status', StatusController::class);
 
     Route::resource('/group', GroupController::class);
+
+    Route::resource('/profile', ProfileController::class);
 
     Route::resource('/license', LicenseController::class);
 
