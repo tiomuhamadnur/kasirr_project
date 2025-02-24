@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\License;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LicenseController extends Controller
 {
@@ -32,9 +33,10 @@ class LicenseController extends Controller
         $data = $request->validate([
             'category_id' => 'numeric|required',
             'description' => 'string|required',
-            'expired_at' => 'required',
             'status_id' => 'numeric|required',
         ]);
+
+        $data['user_id'] = Auth::user()->id;
 
         License::updateOrCreate($data, $data);
 
@@ -57,11 +59,13 @@ class LicenseController extends Controller
         $rawData = $request->validate([
             'category_id' => 'numeric|required',
             'description' => 'string|required',
-            'expired_at' => 'required',
             'status_id' => 'numeric|required',
+            'is_used' => 'numeric|required',
         ]);
 
+        $rawData['user_id'] = Auth::user()->id;
         $data->update($rawData);
+
         return redirect()->route('license.index')->withNotify('Data berhasil diubah');
     }
 

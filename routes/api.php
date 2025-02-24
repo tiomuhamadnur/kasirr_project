@@ -12,7 +12,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:api'])->group( function () {
-    Route::post('send-activation-code', [AuthController::class, 'sendActivationCode']);
+    Route::post('resend-activation-email', [AuthController::class, 'resendActivationEmail']);
     Route::post('verify-activation-code', [AuthController::class, 'verifyActivationCode']);
     Route::post('logout', [AuthController::class, 'logout']);
 });

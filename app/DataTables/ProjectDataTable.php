@@ -72,7 +72,7 @@ class ProjectDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([0, 'asc'])
+                    ->orderBy([8, 'DESC'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -97,6 +97,7 @@ class ProjectDataTable extends DataTable
             Column::make('license.key')->title('License Key'),
             Column::make('license.status.name')->title('Status'),
             Column::make('group.name')->title('Group'),
+            Column::make('updated_at')->title('Updated At'),
         ];
     }
 

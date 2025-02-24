@@ -12,11 +12,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('code')->nullable();
-            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->string('email')->nullable();
             $table->string('status')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->on('users')->references('id');
         });
     }
 

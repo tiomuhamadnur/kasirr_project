@@ -116,16 +116,6 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label required">Description</label>
-                            <textarea class="form-control" name="description" id="description" rows="4" placeholder="input description"
-                                required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">Expired Date</label>
-                            <input type="datetime-local" class="form-control" name="expired_at" autocomplete="off"
-                                required>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label required">Status</label>
                             <select class="form-select" name="status_id" id="status_id" required>
                                 <option value="" selected disabled>- select option -</option>
@@ -133,6 +123,11 @@
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="4" placeholder="input description"
+                                required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -177,22 +172,25 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label required">Description</label>
-                            <textarea class="form-control" name="description" id="description_edit" rows="4"
-                                placeholder="input description" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">Expired Date</label>
-                            <input type="datetime-local" class="form-control" name="expired_at" id="expired_at_edit"
-                                autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label required">Status</label>
                             <select class="form-select" name="status_id" id="status_id_edit" required>
                                 <option value="" selected disabled>- select option -</option>
                                 @foreach ($status as $item)
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Description</label>
+                            <textarea class="form-control" name="description" id="description_edit" rows="4"
+                                placeholder="input description" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Is Used?</label>
+                            <select class="form-select" name="is_used" id="is_used_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
                             </select>
                         </div>
                     </div>
@@ -229,14 +227,14 @@
                 var url = $(e.relatedTarget).data('url');
                 var category_id = $(e.relatedTarget).data('category_id');
                 var description = $(e.relatedTarget).data('description');
-                var expired_at = $(e.relatedTarget).data('expired_at');
                 var status_id = $(e.relatedTarget).data('status_id');
+                var is_used = $(e.relatedTarget).data('is_used');
 
                 document.getElementById("editForm").action = url;
                 $('#category_id_edit').val(category_id);
                 $('#description_edit').val(description);
-                $('#expired_at_edit').val(expired_at);
                 $('#status_id_edit').val(status_id);
+                $('#is_used_edit').val(is_used);
             });
         });
     </script>

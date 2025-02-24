@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Services\FileUploadService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BackupController extends BaseController
 {
@@ -22,14 +23,15 @@ class BackupController extends BaseController
 
     public function index()
     {
-        $group_id = optional(auth()->user()->group)->id;
+        $group_id = Auth::user()->group_id;
+
         if (!$group_id) {
             return $this->sendError('User has no group assigned.');
         }
 
-        $backup = Backup::with(['project', 'user', 'project.license', 'project.license.status', 'project.group'])->whereRelation('project.group', 'id', '=', $group_id)->latest()->first();
+        $backup = Backup::with(['project', 'user', 'user.gender', 'user.group', 'user.role', 'project.license', 'project.license.status', 'project.group'])->whereRelation('project.group', 'id', '=', $group_id)->latest()->first();
 
-        if (is_null($backup)) {
+        if (!$backup) {
             return $this->sendError('Data backup not found.');
         }
 
@@ -44,7 +46,14 @@ class BackupController extends BaseController
 
         $file = $request->file('file');
 
-        $project = Project::where('group_id', auth()->user()->group_id)->first();
+        $user = Auth::user();
+        $group_id = $user->group_id;
+
+        if (!$group_id) {
+            return $this->sendError('User has no group assigned.');
+        }
+
+        $project = Project::where('group_id', $group_id)->first();
 
         if (!$project) {
             return $this->sendError('User has no project assigned.');
@@ -52,12 +61,12 @@ class BackupController extends BaseController
 
         $rawdata = [
             'project_id' => $project->id,
-            'user_id' => auth()->user()->id,
-            'description' => 'Data ini digenerate melalui API oleh ' . auth()->user()->name . ' (pada ' . Carbon::now() . ')',
+            'user_id' => $user->id,
+            'description' => 'Data ini digenerate melalui API oleh ' . $user->name . ' (pada ' . Carbon::now() . ').',
         ];
 
         $backup = Backup::updateOrCreate($rawdata, $rawdata);
-        $backup->load(['project', 'user', 'project.license', 'project.license.status', 'project.group']);
+        $backup->load(['project', 'user', 'user.gender', 'user.group', 'user.role', 'project.license', 'project.license.status', 'project.group']);
 
         if ($file) {
             $filePath = $this->fileUploadService->uploadFile($file, 'backup/file/');

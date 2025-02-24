@@ -9,10 +9,12 @@ use App\Models\ActivationCode;
 use App\Models\Group;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Validator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends BaseController
 {
@@ -23,17 +25,68 @@ class AuthController extends BaseController
         $this->activationService = $activationService;
     }
 
-    public function sendActivationCode()
+    public function register(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+            'c_password' => 'required|same:password',
+            'phone' => 'required|numeric|digits_between:9,15',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors(), 422);
+        }
+
+        try {
+            $input = $validator->validated();
+            $input['password'] = Hash::make($input['password']);
+            $input['role_id'] = 3; // ID role user default
+            $input['group_id'] = $this->generateGroupBySystem();
+
+            $user = User::create($input);
+
+            // Kirim email aktivasi setelah registrasi
+            $activationCode = $this->sendActivationCode($user);
+
+            $success['token'] = $user->createToken('MyApp')->accessToken;
+            $success['user'] = $user->load('role', 'gender', 'group');
+            $success['email_verification'] = $activationCode->original;
+
+            return $this->sendResponse($success, 'User registered successfully, activation email sent.');
+        } catch (Exception $e) {
+            return $this->sendError('Registration failed.', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function sendActivationCode(User $user): JsonResponse
+    {
+        if ($user->email_verified_at) {
+            return $this->sendError('Your email has already been verified, no activation code needed.');
+        }
+
+        // Kirim kode aktivasi
+        $activationCode = $this->activationService->sendActivationCode($user->email);
+
+        return $this->sendResponse(['email' => $user->email, 'activation_code' => $activationCode], 'Activation code has been sent successfully.');
+    }
+
+    public function resendActivationEmail(): JsonResponse
     {
         $user = Auth::user();
 
-        if($user->email_verified_at) {
-            return $this->sendError('Your email has been verified, you don’t need an activation code.');
+        if (!$user) {
+            return $this->sendError('Unauthorized.', ['error' => 'User not logged in.'], 401);
         }
 
-        $activation_code = $this->activationService->sendActivationCode($user->email);
+        if ($user->email_verified_at) {
+            return $this->sendError('Your email has already been verified, no activation code needed.');
+        }
 
-        return $this->sendResponse(['email' => $user->email, 'activation_code' => $activation_code], 'Activation code has been sent successfully.');
+        $activationCode = $this->sendActivationCode($user);
+
+        return $this->sendResponse($activationCode, 'Activation code has been sent successfully.');
     }
 
     public function verifyActivationCode(Request $request)
@@ -44,7 +97,11 @@ class AuthController extends BaseController
 
         $user = Auth::user();
 
-        $validate = ActivationCode::where('user_id', $user->id)->where('code', $request->activation_code)->where('status', 'active')->count();
+        if($user->email_verified_at) {
+            return $this->sendError('Your email account is verified, you dont need an activation code.');
+        }
+
+        $validate = ActivationCode::where('email', $user->email)->where('code', $request->activation_code)->where('status', 'active')->count();
 
         if($validate == 0) {
             return $this->sendError('Your activation code is wrong.');
@@ -56,34 +113,9 @@ class AuthController extends BaseController
             'email_verified_at' => Carbon::now(),
         ]);
 
-        ActivationCode::where('user_id', $user->id)->where('code', $request->activation_code)->where('status', 'active')->delete();
+        ActivationCode::where('email', $user->email)->where('code', $request->activation_code)->where('status', 'active')->delete();
 
         return $this->sendResponse(['user' => $user], 'Activation code is valid, your email has been verified.');
-    }
-
-    public function register(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
-            'phone' => 'required|numeric|digits_between:9,15',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $input['role_id'] = 3;
-        $input['group_id'] = $this->generateGroupBySystem();
-        $user = User::with('role', 'gender', 'group')->create($input);
-        $success['token'] =  $user->createToken('MyApp')->accessToken;
-        $success['user'] =  $user;
-
-        return $this->sendResponse($success, 'User register successfully, but need email verification');
     }
 
     private function generateGroupBySystem()
@@ -105,6 +137,9 @@ class AuthController extends BaseController
     {
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user = Auth::user();
+
+            $user->tokens()->delete();
+
             $success['token'] =  $user->createToken('MyApp')-> accessToken;
             $success['user'] =  $user;
 

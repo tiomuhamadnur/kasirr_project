@@ -30,7 +30,7 @@ class LicenseDataTable extends DataTable
                                 </button>
 
                                 <div class='dropdown-menu dropdown-menu-end'>
-                                    <a class='dropdown-item' href='#' data-bs-toggle='modal' data-bs-target='#editModal' data-url='{$editRoute}' data-category_id='{$item->category_id}' data-description='{$item->description}' data-expired_at='{$item->expired_at}' data-status_id='{$item->status_id}'>
+                                    <a class='dropdown-item' href='#' data-bs-toggle='modal' data-bs-target='#editModal' data-url='{$editRoute}' data-category_id='{$item->category_id}' data-description='{$item->description}' data-expired_at='{$item->expired_at}' data-status_id='{$item->status_id}' data-is_used='{$item->is_used}'>
                                         <svg  xmlns='http://www.w3.org/2000/svg'  width='24'  height='24'  viewBox='0 0 24 24'  fill='none'  stroke='currentColor'  stroke-width='2'  stroke-linecap='round'  stroke-linejoin='round'  class='icon icon-tabler icons-tabler-outline icon-tabler-pencil'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4' /><path d='M13.5 6.5l4 4' /></svg>
                                         Edit
                                     </a>
@@ -62,7 +62,10 @@ class LicenseDataTable extends DataTable
 
                 return $data . $actionButton;
             })
-            ->rawColumns(['#', 'key']);
+            ->addColumn('is_used', function ($item) {
+                return $item->is_used ? 'Yes' : 'No';
+            })
+            ->rawColumns(['#', 'key', 'is_used']);
     }
 
     public function query(License $model): QueryBuilder
@@ -70,6 +73,7 @@ class LicenseDataTable extends DataTable
         return $model->with([
             'status',
             'category',
+            'user',
             ])->newQuery();
     }
 
@@ -82,7 +86,7 @@ class LicenseDataTable extends DataTable
                     ->pageLength(10)
                     ->lengthMenu([10, 50, 100, 250, 500, 1000])
                     //->dom('Bfrtip')
-                    ->orderBy([0, 'asc'])
+                    ->orderBy([8, 'DESC'])
                     ->selectStyleSingle()
                     ->buttons([
                         [
@@ -103,8 +107,10 @@ class LicenseDataTable extends DataTable
             Column::make('key')->title('License Key')->searchable(true),
             Column::make('category.name')->title('Category'),
             Column::make('description')->title('Description'),
-            Column::make('expired_at')->title('Expired At'),
             Column::make('status.name')->title('Status'),
+            Column::make('is_used')->title('Is Used?'),
+            Column::make('user.name')->title('Updated By'),
+            Column::make('updated_at')->title('Updated At'),
         ];
     }
 
