@@ -1,7 +1,7 @@
 @extends('layout.base')
 
 @section('title-head')
-    <title>Backup</title>
+    <title>Asset</title>
 @endsection
 
 @section('page-header')
@@ -10,7 +10,7 @@
             <div class="row g-2 align-items-center">
                 <div class="col">
                     <h2 class="page-title">
-                        Data Backup
+                        Data Asset
                     </h2>
                 </div>
                 <!-- Page title actions -->
@@ -98,7 +98,7 @@
     <div class="modal modal-blur fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
-                <form action="{{ route('backup.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('asset.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('POST')
                     <div class="modal-header">
@@ -107,34 +107,35 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label required">Project</label>
-                            <select class="form-select" name="project_id" id="project_id" required>
-                                <option value="" selected disabled>- select option -</option>
-                                @foreach ($project as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">File Backup (.db)</label>
-                            <input type="file" class="form-control" name="file" id="file" accept=".db"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">User</label>
-                            <select class="form-select" name="user_id" id="user_id" required>
-                                <option value="" selected disabled>- select option -</option>
-                                @foreach ($user as $item)
-                                    <option value="{{ $item->id }}" @selected($item->id === auth()->user()->id)>
-                                        {{ $item->name }} ({{ $item->email }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label class="form-label required">Title</label>
+                            <input type="text" class="form-control" name="title" placeholder="Input title"
+                                autocomplete="off" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Description</label>
                             <textarea class="form-control" name="description" id="description" rows="4" placeholder="input description"
                                 required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Type</label>
+                            <select class="form-select" name="type" id="type" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                                <option value="file">File</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">File Asset</label>
+                            <input type="file" class="form-control" name="file" id="file" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Status</label>
+                            <select class="form-select" name="status" id="status" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -156,7 +157,6 @@
             </div>
         </div>
     </div>
-    <!-- End Add Modal -->
 
     <!-- Edit Modal -->
     <div class="modal modal-blur fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -171,33 +171,42 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label required">Project</label>
-                            <select class="form-select" name="project_id" id="project_id_edit" required>
-                                <option value="" selected disabled>- select option -</option>
-                                @foreach ($project as $item)
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">File Backup (.db)</label>
-                            <input type="file" class="form-control" name="file" id="file_edit" accept=".db">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">User</label>
-                            <select class="form-select" name="user_id" id="user_id_edit" required>
-                                <option value="" selected disabled>- select option -</option>
-                                @foreach ($user as $item)
-                                    <option value="{{ $item->id }}">
-                                        {{ $item->name }} ({{ $item->email }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label class="form-label required">Title</label>
+                            <input type="text" class="form-control" name="title" id="title_edit" placeholder="Input title"
+                                autocomplete="off" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Description</label>
                             <textarea class="form-control" name="description" id="description_edit" rows="4" placeholder="input description"
                                 required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Type</label>
+                            <select class="form-select" name="type" id="type_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="image">Image</option>
+                                <option value="video">Video</option>
+                                <option value="file">File</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">File Asset</label>
+                            <a id="file_url" href="#" title="Show file" target="_blank" class="btn btn-warning btn-icon mb-1" aria-label="Tabler">
+                                <svg  xmlns='http://www.w3.org/2000/svg'  width='24'  height='24'  viewBox='0 0 24 24'  fill='none'  stroke='currentColor'  stroke-width='2'  stroke-linecap='round'  stroke-linejoin='round'  class='icon icon-tabler icons-tabler-outline icon-tabler-file'>
+                                    <path stroke='none' d='M0 0h24v24H0z' fill='none'/>
+                                    <path d='M14 3v4a1 1 0 0 0 1 1h4' />
+                                    <path d='M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z' />
+                                </svg>
+                            </a>
+                            <input type="file" class="form-control" name="file">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Status</label>
+                            <select class="form-select" name="status" id="status_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -219,30 +228,21 @@
             </div>
         </div>
     </div>
-    <!-- End Edit Modal -->
 
-    <!-- Backup Modal -->
-    <div class="modal modal-blur fade" id="backupModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- File Modal -->
+    <div class="modal modal-blur fade" id="fileModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
             <div class="modal-content">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="modal-status bg-warning"></div>
                 <div class="modal-body text-center py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-warning icon-lg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-file-type-sql">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                        <path
-                            d="M5 20.25c0 .414 .336 .75 .75 .75h1.25a1 1 0 0 0 1 -1v-1a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-1a1 1 0 0 1 1 -1h1.25a.75 .75 0 0 1 .75 .75" />
-                        <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
-                        <path d="M18 15v6h2" />
-                        <path d="M13 15a2 2 0 0 1 2 2v2a2 2 0 1 1 -4 0v-2a2 2 0 0 1 2 -2z" />
-                        <path d="M14 20l1.5 1.5" />
+                    <svg  xmlns='http://www.w3.org/2000/svg' class="icon mb-2 text-warning icon-lg" width='24'  height='24'  viewBox='0 0 24 24'  fill='none'  stroke='currentColor'  stroke-width='2'  stroke-linecap='round'  stroke-linejoin='round'  class='icon icon-tabler icons-tabler-outline icon-tabler-file'>
+                        <path stroke='none' d='M0 0h24v24H0z' fill='none'/>
+                        <path d='M14 3v4a1 1 0 0 0 1 1h4' />
+                        <path d='M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z' />
                     </svg>
                     <h3>Are you sure?</h3>
-                    <div class="text-secondary">Do you really want to export this File?</div>
+                    <div class="text-secondary">Do you really want to download this File?</div>
                 </div>
                 <div class="modal-footer">
                     <div class="w-100">
@@ -253,8 +253,8 @@
                                 </a>
                             </div>
                             <div class="col">
-                                <a href="#" id="exportURL" class="btn btn-warning w-100">
-                                    Export
+                                <a href="#" target="_blank" id="exportURL" class="btn btn-warning w-100">
+                                    Download
                                 </a>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
             </div>
         </div>
     </div>
-    <!-- End Backup Modal -->
+    <!-- End File Modal -->
 @endsection
 
 @push('scripts')
@@ -275,17 +275,22 @@
         $(document).ready(function() {
             $('#editModal').on('show.bs.modal', function(e) {
                 var url = $(e.relatedTarget).data('url');
-                var project_id = $(e.relatedTarget).data('project_id');
-                var user_id = $(e.relatedTarget).data('user_id');
+                var title = $(e.relatedTarget).data('title');
                 var description = $(e.relatedTarget).data('description');
+                var type = $(e.relatedTarget).data('type');
+                var status = $(e.relatedTarget).data('status');
+                var file_url = $(e.relatedTarget).data('file_url');
+
 
                 document.getElementById("editForm").action = url;
-                $('#project_id_edit').val(project_id);
-                $('#user_id_edit').val(user_id);
+                $('#title_edit').val(title);
                 $('#description_edit').val(description);
+                $('#type_edit').val(type);
+                $('#status_edit').val(status);
+                document.getElementById("file_url").href = file_url;
             });
 
-            $('#backupModal').on('show.bs.modal', function(e) {
+            $('#fileModal').on('show.bs.modal', function(e) {
                 var url = $(e.relatedTarget).data('url');
 
                 document.getElementById("exportURL").href = url;

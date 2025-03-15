@@ -8,6 +8,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\ActivationCode;
 use App\Models\Group;
 use App\Models\User;
+use App\Services\ForgetPasswordMailService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +20,12 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends BaseController
 {
     protected ActivationMailService $activationService;
+    protected ForgetPasswordMailService $forgetPasswordService;
 
-    public function __construct(ActivationMailService $activationService)
+    public function __construct(ActivationMailService $activationService, ForgetPasswordMailService $forgetPasswordService)
     {
         $this->activationService = $activationService;
+        $this->forgetPasswordService = $forgetPasswordService;
     }
 
     public function register(Request $request): JsonResponse
@@ -158,5 +161,74 @@ class AuthController extends BaseController
         $user->token()->delete();
 
         return $this->sendResponse($user, "User logout successfully.");
+    }
+
+    public function sendForgetPasswordEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'email|required'
+        ]);
+
+        $email = $request->email;
+
+        $user = User::where('email', $email)->first();
+
+        if(!$user) {
+            return $this->sendError('Your email ' . $email . ' is not registered in our system.');
+        }
+
+        $code = $this->forgetPasswordService->sendVerificationCode($email);
+
+        return $this->sendResponse(['email' => $email,'code' => $code], "Verification code has been sent successfully.");
+    }
+
+    public function verifyForgetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|numeric|digits:6',
+            'password' => [
+                'required',
+                'string',
+                'min:6',
+                'regex:/[A-Z]/', // Harus mengandung huruf kapital
+                'regex:/[0-9]/', // Harus mengandung angka
+                'confirmed', // Password confirmation
+            ],
+        ], [
+            'password.regex' => 'Password harus mengandung setidaknya satu huruf kapital dan satu angka.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $email = $request->email;
+        $code = $request->code;
+        $password = $request->password;
+
+        // Cek apakah kode masih aktif
+        $activationCode = ActivationCode::where('email', $email)
+            ->where('code', $code)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$activationCode) {
+            return $this->sendError('Your forget password code is wrong or expired.');
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return $this->sendError('User with email ' . $email . ' is not found.');
+        }
+
+        // Update password baru
+        $user->update([
+            'password' => Hash::make($password),
+        ]);
+
+        $activationCode->delete();
+
+        return $this->sendResponse([
+            'user' => $user->load(['group', 'role', 'gender'])
+        ], 'User password updated successfully & you have to login again.');
     }
 }

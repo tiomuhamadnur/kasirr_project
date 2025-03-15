@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\admin\AssetController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\GenderController;
 use App\Http\Controllers\admin\GroupController;
+use App\Http\Controllers\admin\PromoController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\StatusController;
 use App\Http\Controllers\admin\UserController;
@@ -63,4 +65,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::resource('/project', ProjectController::class);
 
     Route::resource('/backup', BackupController::class);
+
+    Route::resource('/asset', AssetController::class);
+
+    Route::resource('/promo', PromoController::class);
 });

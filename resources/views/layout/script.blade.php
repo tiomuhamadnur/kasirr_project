@@ -21,13 +21,26 @@
 
 <script>
     @if (session('notify'))
-        swal("Yeheeey!", "{{ session('notify') ?? '-' }}", "success");
+        Swal.fire({
+            title: "Yeheeey!",
+            icon: "success",
+            text: "{{ session('notify') ?? '-' }}",
+            draggable: true
+        });
     @elseif (session('notifyerror'))
-        swal("Ooopss!", "{{ session('notifyerror') ?? '-' }}", "error");
+        Swal.fire({
+            icon: "error",
+            title: "Ooopss!",
+            text: "{{ session('notifyerror') ?? '-' }}",
+        });
     @elseif ($errors->any())
         @php
             $messageError = implode('<br>', $errors->all());
         @endphp
-        swal("Ooopss!", "{{ $messageError }}", "error");
+        Swal.fire({
+            icon: "error",
+            title: "Ooopss!",
+            text: "{{ $messageError }}",
+        });
     @endif
 </script>

@@ -55,7 +55,7 @@
 
     <!-- Libs JS -->
     <script src="{{ asset('dist/libs/list.js/dist/list.min.js?1692870487') }}" defer></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Tabler Core -->
     {{-- <script src="{{ asset('dist/js/tabler.min.js?1692870487') }}" defer></script> --}}
