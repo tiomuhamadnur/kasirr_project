@@ -128,6 +128,15 @@
                             <label class="form-label required">File</label>
                             <input type="file" class="form-control" name="file" id="file" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Target</label>
+                            <select class="form-select" name="target" id="target" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="all">All</option>
+                                <option value="subscribed">Subscribed</option>
+                                <option value="unsubscribed">Unsubscribed</option>
+                            </select>
+                        </div>
                         <div class="mb-3 row">
                             <div class="mb-3 col-sm-6">
                                 <label class="form-label required">Start Date</label>
@@ -213,6 +222,15 @@
                                 </svg>
                             </a>
                             <input type="file" class="form-control" name="file">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required">Target</label>
+                            <select class="form-select" name="target" id="target_edit" required>
+                                <option value="" selected disabled>- select option -</option>
+                                <option value="all">All</option>
+                                <option value="subscribed">Subscribed</option>
+                                <option value="unsubscribed">Unsubscribed</option>
+                            </select>
                         </div>
                         <div class="mb-3 row">
                             <div class="col-sm-6">
@@ -308,6 +326,7 @@
                 var description = $(e.relatedTarget).data('description');
                 var type = $(e.relatedTarget).data('type');
                 var status = $(e.relatedTarget).data('status');
+                var target = $(e.relatedTarget).data('target');
                 var start_date = $(e.relatedTarget).data('start_date');
                 var end_date = $(e.relatedTarget).data('end_date');
                 var file_url = $(e.relatedTarget).data('file_url');
@@ -318,6 +337,7 @@
                 $('#description_edit').val(description);
                 $('#type_edit').val(type);
                 $('#status_edit').val(status);
+                $('#target_edit').val(target);
                 $('#start_date_edit').val(start_date);
                 $('#end_date_edit').val(end_date);
                 document.getElementById("file_url").href = file_url;

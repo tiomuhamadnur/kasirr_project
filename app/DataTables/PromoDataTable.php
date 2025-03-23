@@ -31,7 +31,7 @@ class PromoDataTable extends DataTable
                                 </button>
 
                                 <div class='dropdown-menu dropdown-menu-end'>
-                                    <a class='dropdown-item' href='#' data-bs-toggle='modal' data-bs-target='#editModal' data-url='{$editRoute}' data-title='{$item->title}' data-description='{$item->description}' data-type='{$item->type}' data-start_date='{$item->start_date}' data-end_date='{$item->end_date}' data-status='{$item->status}' data-file_url='{$fileUrl}'>
+                                    <a class='dropdown-item' href='#' data-bs-toggle='modal' data-bs-target='#editModal' data-url='{$editRoute}' data-title='{$item->title}' data-description='{$item->description}' data-type='{$item->type}' data-target='{$item->target}' data-start_date='{$item->start_date}' data-end_date='{$item->end_date}' data-status='{$item->status}' data-file_url='{$fileUrl}'>
                                         <svg  xmlns='http://www.w3.org/2000/svg'  width='24'  height='24'  viewBox='0 0 24 24'  fill='none'  stroke='currentColor'  stroke-width='2'  stroke-linecap='round'  stroke-linejoin='round'  class='icon icon-tabler icons-tabler-outline icon-tabler-pencil'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4' /><path d='M13.5 6.5l4 4' /></svg>
                                         Edit
                                     </a>
@@ -104,6 +104,7 @@ class PromoDataTable extends DataTable
             Column::make('description')->title('Description'),
             Column::make('type')->title('Type'),
             Column::computed('file')->title('File'),
+            Column::make('target')->title('Target User'),
             Column::make('start_date')->title('Start Date'),
             Column::make('end_date')->title('End Date'),
             Column::make('status')->title('Status'),
