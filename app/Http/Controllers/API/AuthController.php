@@ -39,7 +39,7 @@ class AuthController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 422);
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
         try {
@@ -59,7 +59,7 @@ class AuthController extends BaseController
 
             return $this->sendResponse($success, 'User registered successfully, activation email sent.');
         } catch (Exception $e) {
-            return $this->sendError('Registration failed.', ['error' => $e->getMessage()], 500);
+            return $this->sendError('Registration failed.', ['error' => $e->getMessage()]);
         }
     }
 
@@ -80,7 +80,7 @@ class AuthController extends BaseController
         $user = Auth::user();
 
         if (!$user) {
-            return $this->sendError('Unauthorized.', ['error' => 'User not logged in.'], 401);
+            return $this->sendError('Unauthorized.', ['error' => 'User not logged in.']);
         }
 
         if ($user->email_verified_at) {
