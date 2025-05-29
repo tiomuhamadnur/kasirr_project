@@ -23,7 +23,7 @@ class StatusController extends Controller
     {
         $data = $request->validate([
             'name' => 'string|required',
-            'code' => 'string|required|unique:gender,code'
+            'code' => 'string|required|unique:status,code'
         ]);
 
         Status::updateOrCreate($data, $data);
