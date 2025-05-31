@@ -94,7 +94,7 @@ class AuthController extends BaseController
 
         $activationCode = $this->sendActivationCode($user);
 
-        return $this->sendResponse($activationCode, 'Activation code has been sent successfully.');
+        return $activationCode;
     }
 
     public function verifyActivationCode(Request $request)
