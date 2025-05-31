@@ -14,16 +14,10 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-
-    protected $appends = ['photo_url'];
+    protected $appends = ['photo_url', 'shop_photo_url'];
+    protected $with = ['group', 'role', 'gender'];
     protected $fillable = [
         'name',
         'email',
@@ -38,23 +32,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'address',
         'pin',
         'pin_verified_at',
+        'shop_name',
+        'shop_address',
+        'shop_phone',
+        'shop_photo',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -66,6 +54,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function photoUrl(): Attribute
     {
         return Attribute::get(fn () => $this->photo ? asset('storage/' . $this->photo) : null);
+    }
+
+    public function shopPhotoUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->shop_photo ? asset('storage/' . $this->shop_photo) : null);
     }
 
     public function gender()

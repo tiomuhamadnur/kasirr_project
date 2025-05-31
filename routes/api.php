@@ -16,21 +16,26 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('/forget-password/send-email', 'sendForgetPasswordEmail');
     Route::post('/forget-password/verify', 'verifyForgetPassword');
+    Route::post('resend-activation-email', 'resendActivationEmail');
+    Route::post('verify-activation-code', 'verifyActivationCode');
 });
 
 Route::middleware(['auth:api'])->group( function () {
     Route::controller(AuthController::class)->group(function () {
-        Route::post('resend-activation-email', 'resendActivationEmail');
-        Route::post('verify-activation-code', 'verifyActivationCode');
         Route::post('logout', 'logout');
     });
 });
 
 Route::middleware(['auth:api', 'email_verified'])->group( function () {
     Route::controller(UserController::class)->group(function () {
+        // User
         Route::get('/user', 'index');
         Route::post('/user', 'update');
         Route::post('/user/photo-profile', 'update_photo_profile');
+
+        // Shop
+        Route::post('/user/shop', 'update_shop');
+        Route::post('/user/shop/photo', 'update_shop_photo');
 
         // Password
         Route::post('/user/password/update', 'update_password');

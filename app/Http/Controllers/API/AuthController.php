@@ -53,7 +53,7 @@ class AuthController extends BaseController
             // Kirim email aktivasi setelah registrasi
             $activationCode = $this->sendActivationCode($user);
 
-            $success['token'] = $user->createToken('MyApp')->accessToken;
+            // $success['token'] = $user->createToken('MyApp')->accessToken;
             $success['user'] = $user->load('role', 'gender', 'group');
             $success['email_verification'] = $activationCode->original;
 
@@ -75,12 +75,17 @@ class AuthController extends BaseController
         return $this->sendResponse(['email' => $user->email, 'activation_code' => $activationCode], 'Activation code has been sent successfully.');
     }
 
-    public function resendActivationEmail(): JsonResponse
+    public function resendActivationEmail(Request $request): JsonResponse
     {
-        $user = Auth::user();
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if (!$user) {
-            return $this->sendError('Unauthorized.', ['error' => 'User not logged in.']);
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return $this->sendError('Unauthorized.', ['error' => 'Invalid email or password.']);
         }
 
         if ($user->email_verified_at) {
@@ -95,28 +100,38 @@ class AuthController extends BaseController
     public function verifyActivationCode(Request $request)
     {
         $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
             'activation_code' => 'required|numeric',
         ]);
 
-        $user = Auth::user();
+        $user = User::where('email', $request->email)->first();
 
-        if($user->email_verified_at) {
-            return $this->sendError('Your email account is verified, you dont need an activation code.');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return $this->sendError('Unauthorized.', ['error' => 'Invalid email or password.']);
         }
 
-        $validate = ActivationCode::where('email', $user->email)->where('code', $request->activation_code)->where('status', 'active')->count();
+        if ($user->email_verified_at) {
+            return $this->sendError('Your email has already been verified, no activation code needed.');
+        }
 
-        if($validate == 0) {
+        $activationCode = ActivationCode::where([
+            ['email', $user->email],
+            ['code', $request->activation_code],
+            ['status', 'active'],
+        ])->first();
+
+        if (!$activationCode) {
             return $this->sendError('Your activation code is wrong.');
         }
 
-        $user = User::with(['group', 'gender', 'role'])->find($user->id);
+        $user->email_verified_at = now();
+        $user->save();
 
-        $user->update([
-            'email_verified_at' => Carbon::now(),
-        ]);
+        $activationCode->delete();
 
-        ActivationCode::where('email', $user->email)->where('code', $request->activation_code)->where('status', 'active')->delete();
+        // Reload user with relationships
+        $user->load(['group', 'gender', 'role']);
 
         return $this->sendResponse(['user' => $user], 'Activation code is valid, your email has been verified.');
     }
@@ -138,18 +153,17 @@ class AuthController extends BaseController
 
     public function login(Request $request): JsonResponse
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
 
             $user->tokens()->delete();
 
-            $success['token'] =  $user->createToken('MyApp')-> accessToken;
-            $success['user'] =  $user;
+            $success['token'] = $user->createToken('MyApp')->accessToken;
+            $success['user'] = $user;
 
             return $this->sendResponse($success, 'User login successfully.');
-        }
-        else{
-            return $this->sendError('Unauthorized.', ['error'=>'Unauthorized']);
+        } else {
+            return $this->sendError('Unauthorized.', ['error' => 'Unauthorized']);
         }
     }
 
@@ -160,55 +174,55 @@ class AuthController extends BaseController
         // Revoke token yang sedang aktif
         $user->token()->delete();
 
-        return $this->sendResponse($user, "User logout successfully.");
+        return $this->sendResponse($user, 'User logout successfully.');
     }
 
     public function sendForgetPasswordEmail(Request $request)
     {
         $request->validate([
-            'email' => 'email|required'
+            'email' => 'email|required',
         ]);
 
         $email = $request->email;
 
         $user = User::where('email', $email)->first();
 
-        if(!$user) {
+        if (!$user) {
             return $this->sendError('Your email ' . $email . ' is not registered in our system.');
         }
 
         $code = $this->forgetPasswordService->sendVerificationCode($email);
 
-        return $this->sendResponse(['email' => $email,'code' => $code], "Verification code has been sent successfully.");
+        return $this->sendResponse(['email' => $email, 'code' => $code], 'Verification code has been sent successfully.');
     }
 
     public function verifyForgetPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'code' => 'required|numeric|digits:6',
-            'password' => [
-                'required',
-                'string',
-                'min:6',
-                'regex:/[A-Z]/', // Harus mengandung huruf kapital
-                'regex:/[0-9]/', // Harus mengandung angka
-                'confirmed', // Password confirmation
+        $request->validate(
+            [
+                'email' => 'required|email',
+                'code' => 'required|numeric|digits:6',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:6',
+                    'regex:/[A-Z]/', // Harus mengandung huruf kapital
+                    'regex:/[0-9]/', // Harus mengandung angka
+                    'confirmed', // Password confirmation
+                ],
             ],
-        ], [
-            'password.regex' => 'Password harus mengandung setidaknya satu huruf kapital dan satu angka.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-        ]);
+            [
+                'password.regex' => 'Password harus mengandung setidaknya satu huruf kapital dan satu angka.',
+                'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            ],
+        );
 
         $email = $request->email;
         $code = $request->code;
         $password = $request->password;
 
         // Cek apakah kode masih aktif
-        $activationCode = ActivationCode::where('email', $email)
-            ->where('code', $code)
-            ->where('status', 'active')
-            ->first();
+        $activationCode = ActivationCode::where('email', $email)->where('code', $code)->where('status', 'active')->first();
 
         if (!$activationCode) {
             return $this->sendError('Your forget password code is wrong or expired.');
@@ -227,8 +241,11 @@ class AuthController extends BaseController
 
         $activationCode->delete();
 
-        return $this->sendResponse([
-            'user' => $user->load(['group', 'role', 'gender'])
-        ], 'User password updated successfully & you have to login again.');
+        return $this->sendResponse(
+            [
+                'user' => $user->load(['group', 'role', 'gender']),
+            ],
+            'User password updated successfully & you have to login again.',
+        );
     }
 }

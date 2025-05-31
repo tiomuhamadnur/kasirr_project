@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\ActivationCode;
+use App\Models\Project;
 use App\Models\User;
 use App\Services\ForgetPinMailService;
 use App\Services\ImageUploadService;
@@ -28,9 +29,21 @@ class UserController extends BaseController
 
     public function index()
     {
-        $user = auth()->user()->load(['role', 'group', 'gender']);
+        $user = Auth::user();
 
-        return $this->sendResponse(['user' => $user], 'User retrieved successfully.');
+        $project = Project::with([
+                'license',
+                'license.category',
+                'license.status',
+                'group',
+            ])
+            ->where('group_id', $user->group_id)
+            ->first();
+
+        return $this->sendResponse([
+            'user' => $user,
+            'license' => optional($project)->license,
+        ], 'User retrieved successfully.');
     }
 
     public function create()
@@ -70,12 +83,6 @@ class UserController extends BaseController
 
         $user->update($data);
 
-        $user = User::with([
-            'group',
-            'role',
-            'gender',
-        ])->find($user->id);
-
         return $this->sendResponse(['user' => $user], 'User updated successfully.');
     }
 
@@ -87,7 +94,7 @@ class UserController extends BaseController
 
         $photo = $request->file('photo');
 
-        $user = User::with(['group', 'role', 'gender'])->find(auth()->user()->id);
+        $user = User::find(Auth::id());
 
         if (!$user) {
             return $this->sendError('User not found.');
@@ -108,6 +115,48 @@ class UserController extends BaseController
         }
 
         return $this->sendResponse(['user' => $user], 'User photo profile updated successfully.');
+    }
+
+    public function update_shop(Request $request)
+    {
+        $validated = $request->validate([
+            'shop_name' => 'required|string',
+            'shop_address' => 'required|string',
+            'shop_phone' => 'required|numeric|digits_between:9,15',
+        ]);
+
+        $user = User::findOrFail(Auth::id());
+
+        $user->update($validated);
+
+        return $this->sendResponse(['user' => $user], 'Shop updated successfully.');
+    }
+
+    public function update_shop_photo(Request $request)
+    {
+        $request->validate([
+            'shop_photo' => 'required|file|image|max:2048'
+        ]);
+
+        $shop_photo = $request->file('shop_photo');
+
+        $user = User::with(['group', 'role', 'gender'])->findOrFail(Auth::id());
+
+        if ($shop_photo) {
+            $photoPath = $this->imageUploadService->uploadPhoto(
+                $shop_photo,
+                'photo/shop/',
+                300
+            );
+
+            if ($user->shop_photo) {
+                Storage::delete($user->shop_photo);
+            }
+
+            $user->update(['shop_photo' => $photoPath]);
+        }
+
+        return $this->sendResponse(['user' => $user], 'Shop photo updated successfully.');
     }
 
     public function update_password(Request $request)
@@ -152,7 +201,7 @@ class UserController extends BaseController
         $user->token()->delete();
 
         return $this->sendResponse([
-            'user' => $user->load(['group', 'role', 'gender'])
+            'user' => $user
         ], 'User password updated successfully & you have to login again.');
     }
 
@@ -173,7 +222,7 @@ class UserController extends BaseController
         ]);
 
         return $this->sendResponse([
-            'user' => $user->load(['group', 'role', 'gender'])
+            'user' => $user
         ], 'User pin created successfully.');
     }
 
@@ -200,18 +249,17 @@ class UserController extends BaseController
         ]);
 
         return $this->sendResponse([
-            'user' => $user->load(['group', 'role', 'gender'])
+            'user' => $user
         ], 'User pin updated successfully.');
     }
 
     public function sendForgetPinEmail()
     {
         $user = Auth::user();
-        $email = $user->email;
 
-        $code = $this->forgetPinMailService->sendVerificationCode($email);
+        $code = $this->forgetPinMailService->sendVerificationCode($user->email);
 
-        return $this->sendResponse(['email' => $email,'code' => $code], "Verification code has been sent successfully.");
+        return $this->sendResponse(['email' => $user->email,'code' => $code], "Verification code has been sent successfully.");
     }
 
     public function verifyForgetPin(Request $request)
@@ -245,7 +293,7 @@ class UserController extends BaseController
         $verificationCode->delete();
 
         return $this->sendResponse([
-            'user' => $user->load(['group', 'role', 'gender'])
+            'user' => $user
         ], 'User pin updated successfully.');
     }
 
